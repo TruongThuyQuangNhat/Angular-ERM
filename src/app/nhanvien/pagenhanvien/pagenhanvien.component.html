@@ -1,0 +1,44 @@
+<div class="example-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Id</mat-label>
+      <input matInput placeholder="NV.01" [formControl]="id" required>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Tên</mat-label>
+        <input matInput placeholder="Nhật" [formControl]="firstName" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Họ</mat-label>
+        <input matInput placeholder="Trương" [formControl]="lastName" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Ảnh</mat-label>
+        <input matInput [formControl]="image" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Chọn Chức Danh</mat-label>
+        <mat-select [(ngModel)]="chucDanh_id">
+          <mat-option *ngFor="let option of ChucDanhList" [value]="option.id">
+            {{option.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Chọn Chức Vụ</mat-label>
+        <mat-select [(ngModel)]="chucVu_id">
+          <mat-option *ngFor="let option of ChucVuList" [value]="option.id">
+            {{option.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Chọn Phòng Ban</mat-label>
+        <mat-select [(ngModel)]="phongBan_id">
+          <mat-option *ngFor="let option of PhongBanList" [value]="option.id">
+            {{option.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-button color="primary">Add</button>
+  </div>
