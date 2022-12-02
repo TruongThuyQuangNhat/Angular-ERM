@@ -1,0 +1,29 @@
+.image-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 20px;
+    border-style: solid;
+    border-radius: 25px;
+    border: 2px solid #187cb6;
+    padding: 20px;
+    justify-content: space-between;
+}
+
+.preview {
+    margin-top: 5px;
+}
+
+.form-submit{
+    padding-top: 20px;
+    width: 400px;
+    margin: auto;
+}
+
+mat-form-field{
+    width: 100%;
+}
+
+.btn-submit{
+    left: 255px;
+}

@@ -16,10 +16,12 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { PagenhanvienComponent } from './nhanvien/pagenhanvien/pagenhanvien.component';
 @NgModule({
   declarations: [
     AppComponent,
     NhanvienComponent,
+    PagenhanvienComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,7 +39,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     ReactiveFormsModule,
     MatButtonModule,
     MatInputModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

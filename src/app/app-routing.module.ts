@@ -4,7 +4,7 @@ import { NhanvienComponent } from './nhanvien/nhanvien.component';
 import { PagenhanvienComponent } from './nhanvien/pagenhanvien/pagenhanvien.component';
 
 const routes: Routes = [
-  { path: 'nhanvien', component: NhanvienComponent },
+  { path: 'nhanvien', component: NhanvienComponent},
   { path: 'nhanvien/create', component: PagenhanvienComponent },
   { path: 'nhanvien/:id', component: PagenhanvienComponent },
 ];

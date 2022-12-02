@@ -1,44 +1,68 @@
-<div class="example-container">
-    <mat-form-field appearance="fill">
-      <mat-label>Id</mat-label>
-      <input matInput placeholder="NV.01" [formControl]="id" required>
-    </mat-form-field>
-    <mat-form-field appearance="fill">
+<div class="form-submit">
+  <h2 mat-dialog-title>{{ formTitle }}</h2>
+  <form [formGroup]="myForm">
+    <div class="example-container">
+      <input hidden formControlName="id">
+      <mat-form-field appearance="outline">
+        <mat-label>ID</mat-label>
+        <input ngDefaultControl matInput placeholder="NV.01" formControlName="id" required [readonly]="NhanVien_Id != ''">
+      </mat-form-field><br>
+      <mat-form-field appearance="outline">
         <mat-label>Tên</mat-label>
-        <input matInput placeholder="Nhật" [formControl]="firstName" required>
-      </mat-form-field>
-      <mat-form-field appearance="fill">
+        <input ngDefaultControl matInput placeholder="Nhật" formControlName="firstName" required>
+      </mat-form-field><br>
+      <mat-form-field appearance="outline">
         <mat-label>Họ</mat-label>
-        <input matInput placeholder="Trương" [formControl]="lastName" required>
-      </mat-form-field>
-      <mat-form-field appearance="fill">
-        <mat-label>Ảnh</mat-label>
-        <input matInput [formControl]="image" required>
-      </mat-form-field>
-      <mat-form-field appearance="fill">
+        <input ngDefaultControl matInput placeholder="Trương" formControlName="lastName" required>
+      </mat-form-field><br>
+      <div class="image-container">
+        <button color="primary" type="button" (click)="fileInput.click()" mat-fab>
+          <mat-icon>image</mat-icon>
+        </button>
+        <input
+          formControlName="fileControl"
+          hidden
+          accept="image/png, image/jpeg"
+          (change)="onFileSelected($event)"
+          #fileInput
+          type="file"
+          id="file"
+          class="image-input"
+        />
+        <img
+          *ngIf="imageProduct || imageName"
+          class="preview"
+          [src]="NhanVien_Id == ''?imageProduct:'https://localhost:5001/'+imageName"
+          style="height: 75px"
+        />
+      </div>
+  
+      <mat-form-field appearance="outline">
         <mat-label>Chọn Chức Danh</mat-label>
-        <mat-select [(ngModel)]="chucDanh_id">
-          <mat-option *ngFor="let option of ChucDanhList" [value]="option.id">
-            {{option.name}}
+        <mat-select formControlName="chucDanh_id">
+          <mat-option ngDefaultControl *ngFor="let option of ChucDanhList" [value]="option.id">
+            {{option.tenChucDanh}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <mat-label>Chọn Chức Vụ</mat-label>
-        <mat-select [(ngModel)]="chucVu_id">
+        <mat-select ngDefaultControl formControlName="chucVu_id">
           <mat-option *ngFor="let option of ChucVuList" [value]="option.id">
-            {{option.name}}
+            {{option.tenChucVu}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <mat-label>Chọn Phòng Ban</mat-label>
-        <mat-select [(ngModel)]="phongBan_id">
+        <mat-select ngDefaultControl formControlName="phongBan_id">
           <mat-option *ngFor="let option of PhongBanList" [value]="option.id">
-            {{option.name}}
+            {{option.tenPhongBan}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-
-      <button mat-button color="primary">Add</button>
-  </div>
+    </div>
+    <a mat-raised-button color="primary" (click)="Cancel()">Cancel</a>
+    <button mat-raised-button color="primary" class="btn-submit" (click)="Submit()">Add</button>
+  </form>
+</div>

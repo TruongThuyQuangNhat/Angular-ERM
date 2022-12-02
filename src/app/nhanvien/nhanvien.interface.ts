@@ -1,11 +1,11 @@
 export interface INhanVien {
-    Id: string,
-    FirstName: string,
-    LastName: string,
-    Image: string,
-    ChucVu_Id: string,
-    ChucDanh_Id: string,
-    PhongBan_Id: string,
+    id: string,
+    firstName: string,
+    lastName: string,
+    image: string,
+    chucVu_ID: string,
+    chucDanh_ID: string,
+    phongBan_ID: string,
 }
 
 export interface IResNhanVien {
