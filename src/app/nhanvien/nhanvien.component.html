@@ -1,5 +1,5 @@
 <div class="mat-elevation-z8">
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="fill"  (keydown.enter)="Submit()">
     <mat-label>Search</mat-label>
     <input matInput placeholder="type..." [(ngModel)]="searchString">
   </mat-form-field>
@@ -71,7 +71,7 @@
           <button mat-button mat-raised-button color="primary" (click)="EditPage(element.id)">
             <mat-icon>edit</mat-icon>Edit
           </button>&nbsp;
-          <button mat-button mat-raised-button color="warn">
+          <button mat-button mat-raised-button color="warn" (click)="openDialog('200ms', '200ms', element.firstName, element.lastName, element.id)">
             <mat-icon>delete</mat-icon>Delete
           </button>
         </td>
@@ -81,11 +81,11 @@
     </table>
   
     <mat-paginator
-    [length]="pageEvent.length"
-    [pageIndex]="pageEvent.pageIndex"
-    [pageSize]="pageEvent.pageSize"
+    [length]="length"
+    [pageIndex]="pageIndex"
+    [pageSize]="pageSize"
     [pageSizeOptions]="[5, 10, 25, 100]"
-    (page)="pageEvent = handlepaginator($event)"
+    (page)="handlePageEvent($event)"
     showFirstLastButtons
   >
   </mat-paginator>

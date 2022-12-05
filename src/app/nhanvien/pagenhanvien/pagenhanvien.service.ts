@@ -38,4 +38,8 @@ export class PagenhanvienService {
     let url = "https://localhost:5001/api/NhanVien/GetNhanVien?id="+id;
     return this.http.get<INhanVien>(url).pipe();
   }
+  updateNhanVien(nhanvien: INhanVien){
+    let url = "https://localhost:5001/api/NhanVien/UpdateNhanVien";
+    return this.http.put(url, nhanvien).pipe();
+  }
 }

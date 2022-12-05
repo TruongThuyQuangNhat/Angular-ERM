@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import {MatIconModule} from '@angular/material/icon';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSidenavModule} from '@angular/material/sidenav';
-import { NhanvienComponent } from './nhanvien/nhanvien.component';
+import { NhanvienComponent, DialogDelete } from './nhanvien/nhanvien.component';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { HttpClientModule } from '@angular/common/http';
@@ -17,10 +17,12 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { PagenhanvienComponent } from './nhanvien/pagenhanvien/pagenhanvien.component';
+import {MatDialogModule} from '@angular/material/dialog';
 @NgModule({
   declarations: [
     AppComponent,
     NhanvienComponent,
+    DialogDelete,
     PagenhanvienComponent,
   ],
   imports: [
@@ -40,6 +42,7 @@ import { PagenhanvienComponent } from './nhanvien/pagenhanvien/pagenhanvien.comp
     MatButtonModule,
     MatInputModule,
     MatSnackBarModule,
+    MatDialogModule
     
   ],
   providers: [],

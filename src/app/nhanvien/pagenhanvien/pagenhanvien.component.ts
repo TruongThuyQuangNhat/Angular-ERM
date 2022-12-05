@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Subscription, switchMap } from 'rxjs';
+import { map, Subscription, switchMap, forkJoin } from 'rxjs';
 import { IChucDanh } from 'src/app/models/ChucDanhModel';
 import { IChucVu } from 'src/app/models/ChucVuModel';
 import { IPhongBan } from 'src/app/models/PhongBanModel';
@@ -14,7 +14,7 @@ import { PagenhanvienService } from './pagenhanvien.service';
   templateUrl: './pagenhanvien.component.html',
   styleUrls: ['./pagenhanvien.component.css']
 })
-export class PagenhanvienComponent implements OnInit {
+export class PagenhanvienComponent implements OnInit, OnDestroy {
   constructor(
     private _pnvService: PagenhanvienService,
     private _snackBar: MatSnackBar,
@@ -22,15 +22,34 @@ export class PagenhanvienComponent implements OnInit {
     public route: ActivatedRoute,
     
   ){}
+  ngOnDestroy(): void {
+    if(this.getListChucDanh$){
+      this.getListChucDanh$.unsubscribe();
+    }
+    if(this.getListChucVu$){
+      this.getListChucVu$.unsubscribe();
+    }
+    if(this.getListPhongBan$){
+      this.getListPhongBan$.unsubscribe();
+    }
+    if(this.getOneNhanVien$){
+      this.getOneNhanVien$.unsubscribe();
+    }
+    if(this.uploads$){
+      this.uploads$.unsubscribe();
+    }
+    if(this.createUser$){
+      this.createUser$.unsubscribe();
+    }
+  }
   ngOnInit(): void {
     const routeParams = this.route.snapshot.paramMap.get("id");
     if(routeParams != null){
-      this._pnvService.getOneNhanVien(routeParams).pipe(switchMap(async (data) => data)).subscribe((data: INhanVien) => {
-        console.log(data)
-        
+      this.getOneNhanVien$ = this._pnvService.getOneNhanVien(routeParams).subscribe((data: INhanVien) => {
         this.NhanVien_Id = data.id;
         this.imageName = data.image;
         this.formTitle = 'Chỉnh Sửa Thông Tin Nhân Viên';
+        this.btnSubmit = 'Lưu Lại'
         this.myForm = new FormGroup({
           id: new FormControl(data.id,Validators.required),
           firstName: new FormControl(data.firstName,Validators.required),
@@ -55,21 +74,29 @@ export class PagenhanvienComponent implements OnInit {
         phongBan_id: new FormControl('',Validators.required),
       });
     }
-    this._pnvService.getListChucDanh().subscribe((data: IChucDanh[]) => {
+    this.getListChucDanh$ = this._pnvService.getListChucDanh().subscribe((data: IChucDanh[]) => {
       this.ChucDanhList = data;
     });
-    this._pnvService.getListChucVu().subscribe((data: IChucVu[]) => {
+    this.getListChucVu$ = this._pnvService.getListChucVu().subscribe((data: IChucVu[]) => {
       this.ChucVuList = data;
     });
-    this._pnvService.getListPhongBan().subscribe((data: IPhongBan[]) => {
+    this.getListPhongBan$ = this._pnvService.getListPhongBan().subscribe((data: IPhongBan[]) => {
       this.PhongBanList = data;
     })
   }
+  getOneNhanVien$!: Subscription;
+  getListChucDanh$!: Subscription;
+  getListChucVu$!: Subscription;
+  getListPhongBan$!: Subscription;
+  uploads$!: Subscription;
+  createUser$!: Subscription;
+  updateUser$!: Subscription;
   NhanVien_Id = '';
   myForm!: FormGroup; 
   imageProduct = ''; // base64
   imageName = '';
   reader!: FileReader;
+  btnSubmit = 'Thêm mới';
   formTitle = "Thêm Mới Nhân Viên";
   ChucDanhList: IChucDanh[] = [];
   ChucVuList: IChucVu[] = [];
@@ -110,8 +137,8 @@ export class PagenhanvienComponent implements OnInit {
     const phongBan_id = this.myForm.get("phongBan_id");
     if (fileSource?.value != null){
       formData.append("photo", fileSource.value);
-      const upload = this._pnvService.uploads(formData);
-      upload.subscribe((data:{message: string, url: string}) => {
+      this.uploads$ = this._pnvService.uploads(formData)
+      .subscribe((data:{message: string, url: string}) => {
         this.imageName = data.url;
         const temp: INhanVien = {
           id: id?.value,
@@ -122,21 +149,60 @@ export class PagenhanvienComponent implements OnInit {
           chucVu_ID: chucVu_id?.value,
           phongBan_ID: phongBan_id?.value,
         }
-        this._pnvService.createUser(temp).subscribe(
-          (value: any)=> {
-          if(value.FirstName && value.LastName){
-            this._snackBar.open('Thêm mới thành công Nhân Viên '+value.FirstName+" "+value.LastName, "close", { duration: 4000});
-          }
-          this.router.navigate(["nhanvien"]);
-        }, (err => {
-          if(err.status === 409){
-            this._snackBar.open('ID đã tồn tại, hãy nhập ID khác', "close", { duration: 4000});
-          } else {
-            this._snackBar.open('Có lỗi khi thêm Nhân Viên, hãy thử lại sau', "close", { duration: 4000});
-          }
-        }))
+        if(this.NhanVien_Id != ''){
+          this.updateUser(temp);
+        } else {
+          this.createUser(temp);
+        }
       })
+    } else {
+      const temp: INhanVien = {
+        id: id?.value,
+        firstName: firstName?.value,
+        lastName: lastName?.value,
+        image: this.imageName,
+        chucDanh_ID: chucDanh_id?.value,
+        chucVu_ID: chucVu_id?.value,
+        phongBan_ID: phongBan_id?.value,
+      }
+      if(this.NhanVien_Id != ''){
+        this.updateUser(temp);
+      } else {
+        this.createUser(temp);
+      }
     }
   }
 
+  createUser = (temp: INhanVien)=>{
+    this.createUser$ = this._pnvService.createUser(temp).subscribe(
+      (value: any)=> {
+        if(value.FirstName && value.LastName){
+          this._snackBar.open('Thêm mới thành công Nhân Viên '+value.FirstName+" "+value.LastName, "close", { duration: 4000});
+        }
+        this.router.navigate(["nhanvien"]);
+      }, 
+      (err: { status: number; }) => {
+        if(err.status === 409){
+          this._snackBar.open('ID đã tồn tại, hãy nhập ID khác', "close", { duration: 4000});
+        } else {
+          this._snackBar.open('Có lỗi khi thêm Nhân Viên, hãy thử lại sau', "close", { duration: 4000});
+        }
+      },
+    );
+  };
+  updateUser = (temp: INhanVien) => {
+    this.updateUser$ = this._pnvService.updateNhanVien(temp).subscribe(
+      (value: any)=> {
+        this._snackBar.open('Cập Nhật thành công Nhân Viên ', "close", { duration: 4000});
+        this.router.navigate(["nhanvien"]);
+      }, 
+      (err: { status: number; }) => {
+        if(err.status === 409){
+          this._snackBar.open('ID không tồn tại', "close", { duration: 4000});
+        } else {
+          this._snackBar.open('Có lỗi khi Cập Nhật thông tin Nhân Viên, hãy thử lại sau', "close", { duration: 4000});
+        }
+      },
+    )
+  }
 }

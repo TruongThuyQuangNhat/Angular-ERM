@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Xóa Nhân Viên</h1>
+<div mat-dialog-content>
+    Bạn có chắc chắn muốn xóa {{data.fn}} {{data.ln}}
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Hủy</button>
+    <button mat-button [mat-dialog-close]="data.id" cdkFocusInitial>Oke</button>
+  </div>

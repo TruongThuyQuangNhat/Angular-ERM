@@ -10,6 +10,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
 import { PagenhanvienComponent } from './pagenhanvien/pagenhanvien.component';
+import {MatDialogModule} from '@angular/material/dialog';
 @NgModule({
   declarations: [
     PagenhanvienComponent
@@ -25,7 +26,8 @@ import { PagenhanvienComponent } from './pagenhanvien/pagenhanvien.component';
     MatButtonModule,
     MatInputModule,
     MatSnackBarModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogModule
   ]
 })
 export class NhanvienModule { }

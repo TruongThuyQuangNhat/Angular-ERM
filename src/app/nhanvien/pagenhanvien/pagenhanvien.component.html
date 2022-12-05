@@ -3,6 +3,12 @@
   <form [formGroup]="myForm">
     <div class="example-container">
       <input hidden formControlName="id">
+      <input hidden formControlName="id">
+      <input hidden formControlName="firstName">
+      <input hidden formControlName="lastName">
+      <input hidden formControlName="chucDanh_id">
+      <input hidden formControlName="chucVu_id">
+      <input hidden formControlName="phongBan_id">
       <mat-form-field appearance="outline">
         <mat-label>ID</mat-label>
         <input ngDefaultControl matInput placeholder="NV.01" formControlName="id" required [readonly]="NhanVien_Id != ''">
@@ -32,7 +38,7 @@
         <img
           *ngIf="imageProduct || imageName"
           class="preview"
-          [src]="NhanVien_Id == ''?imageProduct:'https://localhost:5001/'+imageName"
+          [src]="imageProduct != ''?imageProduct: 'https://localhost:5001/'+imageName"
           style="height: 75px"
         />
       </div>
@@ -62,7 +68,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <a mat-raised-button color="primary" (click)="Cancel()">Cancel</a>
-    <button mat-raised-button color="primary" class="btn-submit" (click)="Submit()">Add</button>
+    <a mat-raised-button color="primary" (click)="Cancel()">Hủy</a>
+    <button mat-raised-button color="primary" class="btn-submit" (click)="Submit()">{{btnSubmit}}</button>
   </form>
 </div>
