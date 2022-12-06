@@ -30,8 +30,8 @@ export class PagenhanvienService {
     let url = 'https://localhost:5001/api/ChucVu/GetAllChucVu?limit=50';
     return this.http.get<IChucVu[]>(url).pipe();
   }
-  getListPhongBan(){
-    let url = 'https://localhost:5001/api/PhongBan/GetAllPhongBan?limit=50';
+  getListPhongBan(parrent_id: string){
+    let url = `https://localhost:5001/api/PhongBan/GetAllPhongBan?parrent_id=${parrent_id}`;
     return this.http.get<IPhongBan[]>(url).pipe();
   }
   getOneNhanVien(id: string){

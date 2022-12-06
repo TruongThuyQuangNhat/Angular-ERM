@@ -62,11 +62,11 @@
       <mat-form-field appearance="outline">
         <mat-label>Chọn Phòng Ban</mat-label>
         <mat-select ngDefaultControl formControlName="phongBan_id">
-          <mat-option *ngFor="let option of PhongBanList" [value]="option.id">
-            {{option.tenPhongBan}}
-          </mat-option>
+          <div [innerHTML]="matSelectExp"></div>
         </mat-select>
       </mat-form-field>
+      
+      
     </div>
     <a mat-raised-button color="primary" (click)="Cancel()">Hủy</a>
     <button mat-raised-button color="primary" class="btn-submit" (click)="Submit()">{{btnSubmit}}</button>

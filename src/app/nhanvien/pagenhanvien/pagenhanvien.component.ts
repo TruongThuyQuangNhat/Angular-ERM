@@ -80,9 +80,7 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
     this.getListChucVu$ = this._pnvService.getListChucVu().subscribe((data: IChucVu[]) => {
       this.ChucVuList = data;
     });
-    this.getListPhongBan$ = this._pnvService.getListPhongBan().subscribe((data: IPhongBan[]) => {
-      this.PhongBanList = data;
-    })
+    this.PhongBanMatSelect( "0", "Danh Sach Phong Ban");
   }
   getOneNhanVien$!: Subscription;
   getListChucDanh$!: Subscription;
@@ -100,8 +98,36 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
   formTitle = "Thêm Mới Nhân Viên";
   ChucDanhList: IChucDanh[] = [];
   ChucVuList: IChucVu[] = [];
-  PhongBanList: IPhongBan[] = []
+  //PhongBanList: any[] = [];
+  matSelectExp = '';
 
+  PhongBanMatSelect( parrent_id: string, tenPB: string){
+    let arrTemp: IPhongBan[] = [];
+    this.getListPhongBan$ = this._pnvService.getListPhongBan(parrent_id).subscribe((data: IPhongBan[]) => {
+      arrTemp = data;
+    });
+    let i: number = 0;
+    
+    this.matSelectExp +=` <div> <mat-optgroup [label]="${tenPB}">`;
+    while(i < arrTemp.length){
+      if(arrTemp[i].id.includes('K')){
+        // de quy
+        this.PhongBanMatSelect(arrTemp[i].id, arrTemp[i].tenPhongBan);
+
+      } else {
+        // ko de quy
+        this.matSelectExp +=`
+            <mat-option
+              style="margin-left: 25px"
+              [value]="${arrTemp[i].id}"
+            >
+            ${arrTemp[i].tenPhongBan}
+            </mat-option>`;
+      }
+      i++;
+    }
+    this.matSelectExp +=`</mat-optgroup> </div>`;
+  }
   onFileSelected(event: Event) {
     this.reader = new FileReader();
 
