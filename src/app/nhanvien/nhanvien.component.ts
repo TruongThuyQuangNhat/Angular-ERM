@@ -93,7 +93,7 @@ export class NhanvienComponent implements OnInit, OnDestroy {
     if((this.key == "" && this.options != "") || (this.key != "" && this.options == "")){
       this._snackBar.open("Cần Chọn Cả 2 Trường Column và Options để Sort!", "close")
     } else {
-      this.initData(1, this.pageSize);
+      this.initData(0, this.pageSize);
     }
   }
 
@@ -101,8 +101,7 @@ export class NhanvienComponent implements OnInit, OnDestroy {
     this.key = "";
     this.options = "";
     this.searchString = "";
-    this.pageIndex = 1;
-    this.pageSize = 5;
+    this.pageIndex = 0;
     this.length = 0
     this.initData(this.pageIndex, this.pageSize);
   }
@@ -128,16 +127,13 @@ export class NhanvienComponent implements OnInit, OnDestroy {
         this.nvService.deleteNhanVien(result).subscribe(
           (data: any)=>{
             console.log(this.pageSize, this.pageIndex)
-            // const page = Number(this.pageEvent.pageIndex) + 1;
-            // this._snackBar.open('Xóa Thành Công Nhân Viên', 'close', {duration: 4000});
+            this._snackBar.open('Xóa Thành Công Nhân Viên', 'close', {duration: 4000});
             
-            // if(this.pageEvent.length % this.pageEvent.pageSize == 1){
-            //   this.pageEvent.pageIndex = this.pageEvent.pageIndex;
-            //   this.initData(this.pageEvent.pageIndex, this.pageEvent.pageSize);
-            // } else {
-            //   this.pageEvent.pageIndex = this.pageEvent.pageIndex -1;
-            //   this.initData(this.pageEvent.pageIndex, this.pageEvent.pageSize);
-            // }
+            if(this.length % this.pageSize == 1){
+              this.initData(this.pageIndex - 1, this.pageSize);
+            } else {
+              this.initData(this.pageIndex, this.pageSize);
+            }
           },
           (err)=>{
             if(err.status == 404){
