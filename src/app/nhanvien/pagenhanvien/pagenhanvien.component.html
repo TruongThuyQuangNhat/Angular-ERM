@@ -46,27 +46,45 @@
       <mat-form-field appearance="outline">
         <mat-label>Chọn Chức Danh</mat-label>
         <mat-select formControlName="chucDanh_id">
-          <mat-option ngDefaultControl *ngFor="let option of ChucDanhList" [value]="option.id">
-            {{option.tenChucDanh}}
+          <mat-option ngDefaultControl *ngFor="let option of ChucDanhList" [value]="option.Id">
+            {{option.TenChucDanh}}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Chọn Chức Vụ</mat-label>
         <mat-select ngDefaultControl formControlName="chucVu_id">
-          <mat-option *ngFor="let option of ChucVuList" [value]="option.id">
-            {{option.tenChucVu}}
+          <mat-option *ngFor="let option of ChucVuList" [value]="option.Id">
+            {{option.TenChucVu}}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Chọn Phòng Ban</mat-label>
         <mat-select ngDefaultControl formControlName="phongBan_id">
-          <div [innerHTML]="matSelectExp"></div>
+          <mat-radio-group>
+          <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+              <button mat-icon-button disabled></button>
+              <mat-option [value]="node.name">
+                {{node.name}}
+              </mat-option>
+            </mat-tree-node>
+            <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
+              <button mat-icon-button matTreeNodeToggle
+                      [attr.aria-label]="'Toggle ' + node.name">
+                <mat-icon class="mat-icon-rtl-mirror">
+                  {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                </mat-icon>
+              </button>
+              <mat-option [value]="node.name">
+                {{node.name}}
+              </mat-option>
+            </mat-tree-node>
+          </mat-tree>
+        </mat-radio-group>
         </mat-select>
       </mat-form-field>
-      
-      
     </div>
     <a mat-raised-button color="primary" (click)="Cancel()">Hủy</a>
     <button mat-raised-button color="primary" class="btn-submit" (click)="Submit()">{{btnSubmit}}</button>

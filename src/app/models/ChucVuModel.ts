@@ -1,7 +1,7 @@
 export interface IChucVu{
-    tenChucVu: string,
-    id: string, 
-    createdDate: string,
-    modifiedDate: string,
-    isActive: boolean,
+    TenChucVu: string,
+    Id: string, 
+    CreatedDate: string,
+    ModifiedDate: string,
+    IsActive: boolean,
 }

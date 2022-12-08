@@ -7,6 +7,8 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
+import {MatTreeModule} from '@angular/material/tree';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   declarations: [],
@@ -21,6 +23,7 @@ import {MatIconModule} from '@angular/material/icon';
     MatInputModule,
     MatSnackBar,
     MatSnackBarModule,
+    MatTreeModule,
   ]
 })
 export class PagenhanvienModule { }

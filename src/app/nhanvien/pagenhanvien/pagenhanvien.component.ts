@@ -8,7 +8,43 @@ import { IChucVu } from 'src/app/models/ChucVuModel';
 import { IPhongBan } from 'src/app/models/PhongBanModel';
 import { INhanVien } from '../nhanvien.interface';
 import { PagenhanvienService } from './pagenhanvien.service';
+import {FlatTreeControl} from '@angular/cdk/tree';
+import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
+import { ITempModel } from 'src/app/models/TempModel';
 
+
+interface FoodNode {
+  name: string;
+  children?: FoodNode[];
+}
+
+const TREE_DATA: FoodNode[] = [
+  {
+    name: 'Fruit',
+    children: [{name: 'Apple'}, {name: 'Banana'}, {name: 'Fruit loops'}],
+  },
+  {
+    name: 'Vegetables',
+    children: [
+      {
+        name: 'Green',
+        children: [{name: 'Broccoli'}, {name: 'Brussels sprouts'}],
+      },
+      {
+        name: 'Orange',
+        children: [{name: 'Pumpkins'}, {name: 'Carrots'}],
+      },
+    ],
+  },
+];
+
+/** Flat node with expandable and level information */
+interface ExampleFlatNode {
+  expandable: boolean;
+  name: string | undefined;
+  level: number;
+  //id: string;
+}
 @Component({
   selector: 'app-pagenhanvien',
   templateUrl: './pagenhanvien.component.html',
@@ -46,19 +82,19 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
     const routeParams = this.route.snapshot.paramMap.get("id");
     if(routeParams != null){
       this.getOneNhanVien$ = this._pnvService.getOneNhanVien(routeParams).subscribe((data: INhanVien) => {
-        this.NhanVien_Id = data.id;
-        this.imageName = data.image;
+        this.NhanVien_Id = data.Id;
+        this.imageName = data.Image;
         this.formTitle = 'Chỉnh Sửa Thông Tin Nhân Viên';
         this.btnSubmit = 'Lưu Lại'
         this.myForm = new FormGroup({
-          id: new FormControl(data.id,Validators.required),
-          firstName: new FormControl(data.firstName,Validators.required),
-          lastName: new FormControl(data.lastName,Validators.required),
+          id: new FormControl(data.Id,Validators.required),
+          firstName: new FormControl(data.FirstName,Validators.required),
+          lastName: new FormControl(data.LastName,Validators.required),
           fileSource: new FormControl(),
           fileControl: new FormControl(),
-          chucDanh_id: new FormControl(data.chucDanh_ID,Validators.required),
-          chucVu_id: new FormControl(data.chucVu_ID,Validators.required),
-          phongBan_id: new FormControl(data.phongBan_ID,Validators.required),
+          chucDanh_id: new FormControl(data.ChucDanh_ID,Validators.required),
+          chucVu_id: new FormControl(data.ChucVu_ID,Validators.required),
+          phongBan_id: new FormControl(data.PhongBan_ID,Validators.required),
         });
       });
     } else {
@@ -80,7 +116,9 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
     this.getListChucVu$ = this._pnvService.getListChucVu().subscribe((data: IChucVu[]) => {
       this.ChucVuList = data;
     });
-    this.PhongBanMatSelect( "0", "Danh Sach Phong Ban");
+    this.getListPhongBan$ = this._pnvService.getListPhongBan().subscribe((data: ITempModel[]) => {
+      this.dataSource.data = data;
+    });
   }
   getOneNhanVien$!: Subscription;
   getListChucDanh$!: Subscription;
@@ -98,36 +136,8 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
   formTitle = "Thêm Mới Nhân Viên";
   ChucDanhList: IChucDanh[] = [];
   ChucVuList: IChucVu[] = [];
-  //PhongBanList: any[] = [];
-  matSelectExp = '';
+  //PhongBanList: ITempModel[] = [];
 
-  PhongBanMatSelect( parrent_id: string, tenPB: string){
-    let arrTemp: IPhongBan[] = [];
-    this.getListPhongBan$ = this._pnvService.getListPhongBan(parrent_id).subscribe((data: IPhongBan[]) => {
-      arrTemp = data;
-    });
-    let i: number = 0;
-    
-    this.matSelectExp +=` <div> <mat-optgroup [label]="${tenPB}">`;
-    while(i < arrTemp.length){
-      if(arrTemp[i].id.includes('K')){
-        // de quy
-        this.PhongBanMatSelect(arrTemp[i].id, arrTemp[i].tenPhongBan);
-
-      } else {
-        // ko de quy
-        this.matSelectExp +=`
-            <mat-option
-              style="margin-left: 25px"
-              [value]="${arrTemp[i].id}"
-            >
-            ${arrTemp[i].tenPhongBan}
-            </mat-option>`;
-      }
-      i++;
-    }
-    this.matSelectExp +=`</mat-optgroup> </div>`;
-  }
   onFileSelected(event: Event) {
     this.reader = new FileReader();
 
@@ -143,7 +153,7 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
       this.reader.readAsDataURL(source.value);
     }
     this.reader.onload = this.readSuccess;
-  }
+  };
   readSuccess = () => {
     if (this.reader.result) {
       this.imageProduct = this.reader.result.toString();
@@ -153,52 +163,53 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
     this.router.navigate(["nhanvien"]);
   }
   Submit(){
-    const formData = new FormData();
-    const fileSource = this.myForm.get("fileSource");
-    const id = this.myForm.get("id");
-    const firstName = this.myForm.get("firstName");
-    const lastName = this.myForm.get("lastName");
-    const chucDanh_id = this.myForm.get("chucDanh_id");
-    const chucVu_id = this.myForm.get("chucVu_id");
     const phongBan_id = this.myForm.get("phongBan_id");
-    if (fileSource?.value != null){
-      formData.append("photo", fileSource.value);
-      this.uploads$ = this._pnvService.uploads(formData)
-      .subscribe((data:{message: string, url: string}) => {
-        this.imageName = data.url;
-        const temp: INhanVien = {
-          id: id?.value,
-          firstName: firstName?.value,
-          lastName: lastName?.value,
-          image: this.imageName,
-          chucDanh_ID: chucDanh_id?.value,
-          chucVu_ID: chucVu_id?.value,
-          phongBan_ID: phongBan_id?.value,
-        }
-        if(this.NhanVien_Id != ''){
-          this.updateUser(temp);
-        } else {
-          this.createUser(temp);
-        }
-      })
-    } else {
-      const temp: INhanVien = {
-        id: id?.value,
-        firstName: firstName?.value,
-        lastName: lastName?.value,
-        image: this.imageName,
-        chucDanh_ID: chucDanh_id?.value,
-        chucVu_ID: chucVu_id?.value,
-        phongBan_ID: phongBan_id?.value,
-      }
-      if(this.NhanVien_Id != ''){
-        this.updateUser(temp);
-      } else {
-        this.createUser(temp);
-      }
-    }
+    console.log(phongBan_id?.value);
+    // const formData = new FormData();
+    // const fileSource = this.myForm.get("fileSource");
+    // const id = this.myForm.get("id");
+    // const firstName = this.myForm.get("firstName");
+    // const lastName = this.myForm.get("lastName");
+    // const chucDanh_id = this.myForm.get("chucDanh_id");
+    // const chucVu_id = this.myForm.get("chucVu_id");
+    // const phongBan_id = this.myForm.get("phongBan_id");
+    // if (fileSource?.value != null){
+    //   formData.append("photo", fileSource.value);
+    //   this.uploads$ = this._pnvService.uploads(formData)
+    //   .subscribe((data:{message: string, url: string}) => {
+    //     this.imageName = data.url;
+    //     const temp: INhanVien = {
+    //       Id: id?.value,
+    //       FirstName: firstName?.value,
+    //       LastName: lastName?.value,
+    //       Image: this.imageName,
+    //       ChucDanh_ID: chucDanh_id?.value,
+    //       ChucVu_ID: chucVu_id?.value,
+    //       PhongBan_ID: phongBan_id?.value,
+    //     }
+    //     if(this.NhanVien_Id != ''){
+    //       this.updateUser(temp);
+    //     } else {
+    //       this.createUser(temp);
+    //     }
+    //   })
+    // } else {
+    //   const temp: INhanVien = {
+    //     Id: id?.value,
+    //     FirstName: firstName?.value,
+    //     LastName: lastName?.value,
+    //     Image: this.imageName,
+    //     ChucDanh_ID: chucDanh_id?.value,
+    //     ChucVu_ID: chucVu_id?.value,
+    //     PhongBan_ID: phongBan_id?.value,
+    //   }
+    //   if(this.NhanVien_Id != ''){
+    //     this.updateUser(temp);
+    //   } else {
+    //     this.createUser(temp);
+    //   }
+    // }
   }
-
   createUser = (temp: INhanVien)=>{
     this.createUser$ = this._pnvService.createUser(temp).subscribe(
       (value: any)=> {
@@ -231,4 +242,30 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
       },
     )
   }
+
+  ///////////////////  tree  ////////////////////////////////
+  private _transformer = (node: ITempModel, level: number) => {
+    return {
+      expandable: !!node.listTempModel && node.listTempModel.length > 0,
+      name: node.PhongBan?.TenPhongBan,
+      level: level,
+      //id: node.PhongBan?.Id
+    };
+  };
+
+  treeControl = new FlatTreeControl<ExampleFlatNode>(
+    node => node.level,
+    node => node.expandable,
+  );
+
+  treeFlattener = new MatTreeFlattener(
+    this._transformer,
+    node => node.level,
+    node => node.expandable,
+    node => node.listTempModel,
+  );
+
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+  hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { IChucDanh } from 'src/app/models/ChucDanhModel';
 import { IChucVu } from 'src/app/models/ChucVuModel';
 import { IPhongBan } from 'src/app/models/PhongBanModel';
+import { ITempModel } from 'src/app/models/TempModel';
 import { INhanVien } from '../nhanvien.interface';
 
 @Injectable({
@@ -30,9 +31,9 @@ export class PagenhanvienService {
     let url = 'https://localhost:5001/api/ChucVu/GetAllChucVu?limit=50';
     return this.http.get<IChucVu[]>(url).pipe();
   }
-  getListPhongBan(parrent_id: string){
-    let url = `https://localhost:5001/api/PhongBan/GetAllPhongBan?parrent_id=${parrent_id}`;
-    return this.http.get<IPhongBan[]>(url).pipe();
+  getListPhongBan(){
+    let url = `https://localhost:5001/api/PhongBan/GetAllPhongBan`;
+    return this.http.get<ITempModel[]>(url).pipe();
   }
   getOneNhanVien(id: string){
     let url = "https://localhost:5001/api/NhanVien/GetNhanVien?id="+id;

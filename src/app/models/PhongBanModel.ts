@@ -1,8 +1,8 @@
 export interface IPhongBan{
-    tenPhongBan: string,
+    TenPhongBan: string,
     parrent_id: string,
-    id: string, 
-    createdDate: string,
-    modifiedDate: string,
-    isActive: boolean,
+    Id: string, 
+    CreatedDate: string,
+    ModifiedDate: string,
+    IsActive: boolean,
 }

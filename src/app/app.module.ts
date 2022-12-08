@@ -18,6 +18,8 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { PagenhanvienComponent } from './nhanvien/pagenhanvien/pagenhanvien.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatTreeModule} from '@angular/material/tree';
+import {MatRadioModule} from '@angular/material/radio';
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,8 +44,9 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatButtonModule,
     MatInputModule,
     MatSnackBarModule,
-    MatDialogModule
-    
+    MatDialogModule,
+    MatTreeModule,
+    MatRadioModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
