@@ -59,6 +59,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+        <h4 *ngIf="NhanVien_Id != ''">Phòng Ban Hiện Tại: {{phongBan.TenPhongBan}}</h4>
       <mat-form-field appearance="outline">
         <mat-label>Chọn Phòng Ban</mat-label>
         <mat-select ngDefaultControl formControlName="phongBan_id">
@@ -66,8 +67,8 @@
           <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
             <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
               <button mat-icon-button disabled></button>
-              <mat-option [value]="node.name">
-                {{node.name}}
+              <mat-option [value]="node.name.Id">
+                {{node.name.TenPhongBan}}
               </mat-option>
             </mat-tree-node>
             <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
@@ -77,8 +78,8 @@
                   {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                 </mat-icon>
               </button>
-              <mat-option [value]="node.name">
-                {{node.name}}
+              <mat-option [value]="node.name.Id">
+                {{node.name.TenPhongBan}}
               </mat-option>
             </mat-tree-node>
           </mat-tree>

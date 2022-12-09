@@ -12,38 +12,10 @@ import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import { ITempModel } from 'src/app/models/TempModel';
 
-
-interface FoodNode {
-  name: string;
-  children?: FoodNode[];
-}
-
-const TREE_DATA: FoodNode[] = [
-  {
-    name: 'Fruit',
-    children: [{name: 'Apple'}, {name: 'Banana'}, {name: 'Fruit loops'}],
-  },
-  {
-    name: 'Vegetables',
-    children: [
-      {
-        name: 'Green',
-        children: [{name: 'Broccoli'}, {name: 'Brussels sprouts'}],
-      },
-      {
-        name: 'Orange',
-        children: [{name: 'Pumpkins'}, {name: 'Carrots'}],
-      },
-    ],
-  },
-];
-
-/** Flat node with expandable and level information */
 interface ExampleFlatNode {
   expandable: boolean;
-  name: string | undefined;
+  name: IPhongBan | undefined;
   level: number;
-  //id: string;
 }
 @Component({
   selector: 'app-pagenhanvien',
@@ -77,6 +49,9 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
     if(this.createUser$){
       this.createUser$.unsubscribe();
     }
+    if(this.getOnePhongBan$){
+      this.getOnePhongBan$.unsubscribe();
+    }
   }
   ngOnInit(): void {
     const routeParams = this.route.snapshot.paramMap.get("id");
@@ -85,7 +60,8 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
         this.NhanVien_Id = data.Id;
         this.imageName = data.Image;
         this.formTitle = 'Chỉnh Sửa Thông Tin Nhân Viên';
-        this.btnSubmit = 'Lưu Lại'
+        this.btnSubmit = 'Lưu Lại';
+        this.phongBanId = data.PhongBan_ID;
         this.myForm = new FormGroup({
           id: new FormControl(data.Id,Validators.required),
           firstName: new FormControl(data.FirstName,Validators.required),
@@ -96,6 +72,9 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
           chucVu_id: new FormControl(data.ChucVu_ID,Validators.required),
           phongBan_id: new FormControl(data.PhongBan_ID,Validators.required),
         });
+        this.getOnePhongBan$ = this._pnvService.getOnePhongBan(this.phongBanId).subscribe((data: IPhongBan) => {
+          this.phongBan = data;
+        })
       });
     } else {
       this.myForm = new FormGroup({
@@ -120,6 +99,9 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
       this.dataSource.data = data;
     });
   }
+  getOnePhongBan$!: Subscription;
+  phongBanId!: string;
+  phongBan!: IPhongBan;
   getOneNhanVien$!: Subscription;
   getListChucDanh$!: Subscription;
   getListChucVu$!: Subscription;
@@ -163,52 +145,50 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
     this.router.navigate(["nhanvien"]);
   }
   Submit(){
+    const formData = new FormData();
+    const fileSource = this.myForm.get("fileSource");
+    const id = this.myForm.get("id");
+    const firstName = this.myForm.get("firstName");
+    const lastName = this.myForm.get("lastName");
+    const chucDanh_id = this.myForm.get("chucDanh_id");
+    const chucVu_id = this.myForm.get("chucVu_id");
     const phongBan_id = this.myForm.get("phongBan_id");
-    console.log(phongBan_id?.value);
-    // const formData = new FormData();
-    // const fileSource = this.myForm.get("fileSource");
-    // const id = this.myForm.get("id");
-    // const firstName = this.myForm.get("firstName");
-    // const lastName = this.myForm.get("lastName");
-    // const chucDanh_id = this.myForm.get("chucDanh_id");
-    // const chucVu_id = this.myForm.get("chucVu_id");
-    // const phongBan_id = this.myForm.get("phongBan_id");
-    // if (fileSource?.value != null){
-    //   formData.append("photo", fileSource.value);
-    //   this.uploads$ = this._pnvService.uploads(formData)
-    //   .subscribe((data:{message: string, url: string}) => {
-    //     this.imageName = data.url;
-    //     const temp: INhanVien = {
-    //       Id: id?.value,
-    //       FirstName: firstName?.value,
-    //       LastName: lastName?.value,
-    //       Image: this.imageName,
-    //       ChucDanh_ID: chucDanh_id?.value,
-    //       ChucVu_ID: chucVu_id?.value,
-    //       PhongBan_ID: phongBan_id?.value,
-    //     }
-    //     if(this.NhanVien_Id != ''){
-    //       this.updateUser(temp);
-    //     } else {
-    //       this.createUser(temp);
-    //     }
-    //   })
-    // } else {
-    //   const temp: INhanVien = {
-    //     Id: id?.value,
-    //     FirstName: firstName?.value,
-    //     LastName: lastName?.value,
-    //     Image: this.imageName,
-    //     ChucDanh_ID: chucDanh_id?.value,
-    //     ChucVu_ID: chucVu_id?.value,
-    //     PhongBan_ID: phongBan_id?.value,
-    //   }
-    //   if(this.NhanVien_Id != ''){
-    //     this.updateUser(temp);
-    //   } else {
-    //     this.createUser(temp);
-    //   }
-    // }
+    if (fileSource?.value != null){
+      formData.append("photo", fileSource.value);
+      this.uploads$ = this._pnvService.uploads(formData)
+      .subscribe((data:{message: string, url: string}) => {
+        this.imageName = data.url;
+        const temp: INhanVien = {
+          Id: id?.value,
+          FirstName: firstName?.value,
+          LastName: lastName?.value,
+          Image: this.imageName,
+          ChucDanh_ID: chucDanh_id?.value,
+          ChucVu_ID: chucVu_id?.value,
+          PhongBan_ID: phongBan_id?.value,
+        }
+        if(this.NhanVien_Id != ''){
+          this.updateUser(temp);
+        } else {
+          this.createUser(temp);
+        }
+      })
+    } else {
+      const temp: INhanVien = {
+        Id: id?.value,
+        FirstName: firstName?.value,
+        LastName: lastName?.value,
+        Image: this.imageName,
+        ChucDanh_ID: chucDanh_id?.value,
+        ChucVu_ID: chucVu_id?.value,
+        PhongBan_ID: phongBan_id?.value,
+      }
+      if(this.NhanVien_Id != ''){
+        this.updateUser(temp);
+      } else {
+        this.createUser(temp);
+      }
+    }
   }
   createUser = (temp: INhanVien)=>{
     this.createUser$ = this._pnvService.createUser(temp).subscribe(
@@ -247,9 +227,8 @@ export class PagenhanvienComponent implements OnInit, OnDestroy {
   private _transformer = (node: ITempModel, level: number) => {
     return {
       expandable: !!node.listTempModel && node.listTempModel.length > 0,
-      name: node.PhongBan?.TenPhongBan,
+      name: node.PhongBan,
       level: level,
-      //id: node.PhongBan?.Id
     };
   };
 
