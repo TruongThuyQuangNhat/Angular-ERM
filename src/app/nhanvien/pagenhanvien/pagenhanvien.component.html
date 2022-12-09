@@ -85,7 +85,9 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <a mat-raised-button color="primary" (click)="Cancel()">Hủy</a>
-    <button mat-raised-button color="primary" class="btn-submit" (click)="Submit()">{{btnSubmit}}</button>
+    <div class="groupBtn">
+      <a mat-raised-button color="primary" (click)="Cancel()">Hủy</a>
+      <button mat-raised-button color="primary" (click)="Submit()">{{btnSubmit}}</button>
+    </div>
   </form>
 </div>

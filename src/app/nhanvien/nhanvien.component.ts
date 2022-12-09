@@ -49,7 +49,6 @@ export class NhanvienComponent implements OnInit, OnDestroy {
       page?page.toString():'0', limit?limit.toString():'5',
       this.searchString, this.key, 
       this.options, this.chucDanh_id, this.chucVu_id, this.phongBan_id).subscribe(data => {
-        console.log(data);
       this.dataSource = new MatTableDataSource<IResNhanVien>(data);
     });
     this.getTotalCount$ = this.nvService.getTotalCount(
@@ -183,6 +182,7 @@ export class NhanvienComponent implements OnInit, OnDestroy {
 
   OnClickPhongBan(id: string){
     this.phongBan_id = id;
+    this.pageIndex = 0;
     this.initData(this.pageIndex, this.pageSize);
   }
 

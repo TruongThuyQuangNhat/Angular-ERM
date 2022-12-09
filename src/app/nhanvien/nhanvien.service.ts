@@ -18,9 +18,7 @@ export class NhanvienService {
     chucDanh_id: string, 
     chucVu_id: string, 
     phongBan_id: string){
-    let url = `https://localhost:5001/api/NhanVien/GetAllNhanVien?page=${page}
-    &limit=${limit}&search=${search}&key=${key}&options=${options}
-    &chucDanh_id=${chucDanh_id}&chucVu_id=${chucVu_id}&phongBan_id=${phongBan_id}`;
+    let url = `https://localhost:5001/api/NhanVien/GetAllNhanVien?page=${page}&limit=${limit}&search=${search}&key=${key}&options=${options}&chucDanh_id=${chucDanh_id}&chucVu_id=${chucVu_id}&phongBan_id=${phongBan_id}`;
     return this.http.get<IResNhanVien[]>(url).pipe();
   }
 
@@ -30,8 +28,7 @@ export class NhanvienService {
     chucVu_id: string, 
     phongBan_id: string
   ){
-    let url = `https://localhost:5001/api/NhanVien/TotalCountOfGetAll?search=${search}
-    &chucDanh_id=${chucDanh_id}&chucVu_id=${chucVu_id}&phongBan_id=${phongBan_id}`;
+    let url = `https://localhost:5001/api/NhanVien/TotalCountOfGetAll?search=${search}&chucDanh_id=${chucDanh_id}&chucVu_id=${chucVu_id}&phongBan_id=${phongBan_id}`;
     return this.http.get<number>(url).pipe();
   }
 
