@@ -11,6 +11,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
 import { PagenhanvienComponent } from './pagenhanvien/pagenhanvien.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatGridListModule} from '@angular/material/grid-list';
 @NgModule({
   declarations: [
     PagenhanvienComponent
@@ -27,7 +28,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatInputModule,
     MatSnackBarModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatGridListModule
   ]
 })
 export class NhanvienModule { }

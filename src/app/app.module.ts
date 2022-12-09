@@ -20,6 +20,7 @@ import { PagenhanvienComponent } from './nhanvien/pagenhanvien/pagenhanvien.comp
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTreeModule} from '@angular/material/tree';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatGridListModule} from '@angular/material/grid-list';
 @NgModule({
   declarations: [
     AppComponent,
@@ -47,6 +48,7 @@ import {MatRadioModule} from '@angular/material/radio';
     MatDialogModule,
     MatTreeModule,
     MatRadioModule,
+    MatGridListModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

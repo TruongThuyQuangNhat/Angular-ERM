@@ -8,6 +8,17 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import { Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { PagenhanvienService } from "./pagenhanvien/pagenhanvien.service";
+import { IPhongBan } from "../models/PhongBanModel";
+import { ITempModel } from "../models/TempModel";
+import {FlatTreeControl} from '@angular/cdk/tree';
+import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
+
+interface ExampleFlatNode {
+  expandable: boolean;
+  name: IPhongBan | undefined;
+  level: number;
+}
 @Component({
   selector: 'app-nhanvien',
   templateUrl: './nhanvien.component.html',
@@ -19,29 +30,46 @@ export class NhanvienComponent implements OnInit, OnDestroy {
     private _snackBar: MatSnackBar,
     private router: Router,
     public dialog: MatDialog,
+    private _pnvService: PagenhanvienService,
   ){}
   ngOnDestroy(): void {
-    this.getListUser$.unsubscribe();
-    this.getTotalCount$.unsubscribe();
+    if(this.getListUser$){
+      this.getListUser$.unsubscribe();
+    }
+    if(this.getTotalCount$){
+      this.getTotalCount$.unsubscribe();
+    }
+    if(this.getListPhongBan$){
+      this.getListPhongBan$.unsubscribe();
+    }
   }
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   initData(page: number, limit: number){
     this.getListUser$ = this.nvService.getListUser(
       page?page.toString():'0', limit?limit.toString():'5',
       this.searchString, this.key, 
-      this.options).subscribe(data => {
+      this.options, this.chucDanh_id, this.chucVu_id, this.phongBan_id).subscribe(data => {
+        console.log(data);
       this.dataSource = new MatTableDataSource<IResNhanVien>(data);
     });
-    this.getTotalCount$ = this.nvService.getTotalCount(this.searchString).subscribe(data => {
+    this.getTotalCount$ = this.nvService.getTotalCount(
+      this.searchString, 
+      this.chucDanh_id, 
+      this.chucVu_id, 
+      this.phongBan_id
+    ).subscribe(data => {
       this.length = data;
     })
     this.pageIndex = page;
     this.pageSize = limit;
-    console.log("page:", this.pageIndex, "- limit: ", this.pageSize, ' - length', this.length);
   };
   ngOnInit(): void {
     this.initData(this.pageIndex, this.pageSize);
+    this.getListPhongBan$ = this._pnvService.getListPhongBan().subscribe((data: ITempModel[]) => {
+      this.dataSourceTree.data = data;
+    });
   }
+  getListPhongBan$!: Subscription;
   getListUser$!: Subscription;
   getTotalCount$!: Subscription;
   dataSource = new MatTableDataSource<IResNhanVien>([]);
@@ -78,7 +106,10 @@ export class NhanvienComponent implements OnInit, OnDestroy {
       view: "Z-A",
       value: "desc"
     }
-  ]
+  ];
+  chucDanh_id: string = "";
+  chucVu_id: string = "";
+  phongBan_id: string = "";
   pageEvent: PageEvent = new PageEvent();
   displayedColumns: string[] = ['Id', 'FirstName', 'LastName', 'Image', 'TenChucDanh', 'TenChucVu', 'TenPhongBan', 'Actions'];
   handlePageEvent(value: PageEvent){
@@ -102,7 +133,10 @@ export class NhanvienComponent implements OnInit, OnDestroy {
     this.options = "";
     this.searchString = "";
     this.pageIndex = 0;
-    this.length = 0
+    this.length = 0;
+    this.chucDanh_id = "";
+    this.chucVu_id = "";
+    this.phongBan_id = "";
     this.initData(this.pageIndex, this.pageSize);
   }
 
@@ -146,6 +180,36 @@ export class NhanvienComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  OnClickPhongBan(id: string){
+    this.phongBan_id = id;
+    this.initData(this.pageIndex, this.pageSize);
+  }
+
+  ///////////////////  tree  ////////////////////////////////
+  private _transformer = (node: ITempModel, level: number) => {
+    return {
+      expandable: !!node.listTempModel && node.listTempModel.length > 0,
+      name: node.PhongBan,
+      level: level,
+    };
+  };
+
+  treeControl = new FlatTreeControl<ExampleFlatNode>(
+    node => node.level,
+    node => node.expandable,
+  );
+
+  treeFlattener = new MatTreeFlattener(
+    this._transformer,
+    node => node.level,
+    node => node.expandable,
+    node => node.listTempModel,
+  );
+
+  dataSourceTree = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+  hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
 }
 
 @Component({

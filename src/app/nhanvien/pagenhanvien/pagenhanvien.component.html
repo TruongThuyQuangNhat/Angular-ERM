@@ -63,7 +63,6 @@
       <mat-form-field appearance="outline">
         <mat-label>Chọn Phòng Ban</mat-label>
         <mat-select ngDefaultControl formControlName="phongBan_id">
-          <mat-radio-group>
           <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
             <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
               <button mat-icon-button disabled></button>
@@ -83,7 +82,6 @@
               </mat-option>
             </mat-tree-node>
           </mat-tree>
-        </mat-radio-group>
         </mat-select>
       </mat-form-field>
     </div>

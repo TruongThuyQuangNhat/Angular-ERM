@@ -1,6 +1,5 @@
 .mat-elevation-z8{
-    width: 80%;
-    margin: auto;
+    width: 100%;
 }
 
 .image-product {
@@ -10,5 +9,11 @@
 .btn-add {
     position: absolute;
     right: 12%;
-    top: 8%;
+    top: 9%;
+}
+
+.grid-container{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
 }
